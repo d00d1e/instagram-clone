@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import Post from './Post';
+import ImageUpload from './ImageUpload';
 import { db, auth } from './firebase';
 
 import Modal from '@material-ui/core/Modal';
@@ -60,7 +61,7 @@ function App() {
 
 
   useEffect(() => {
-    db.collection('posts').onSnapshot(snapshot => {
+    db.collection('posts').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
       // runs every time a new post is added 
       setPosts(snapshot.docs.map(doc => ({
         id: doc.id,
@@ -71,21 +72,21 @@ function App() {
 
   const signUp = (event) => {
     event.preventDefault();
-
-    auth.createUserWithEmailAndPassword(email, password)
-    .then((authUser) => {
-      return authUser.user.updateProfile({
-        displayName: username
+    auth
+      .createUserWithEmailAndPassword(email, password)
+      .then((authUser) => {
+        return authUser.user.updateProfile({
+          displayName: username
+        })
       })
-    })
-    .catch((error) => alert(error.message))
+      .catch((error) => alert(error.message))
   }
 
   const signIn = (event) => {
     event.preventDefault();
-   
-    auth.signInWithEmailAndPassword(email, password)
-    .catch((error) => alert(error.message))
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .catch((error) => alert(error.message))
 
     setOpenSignIn(false);
   }
@@ -93,6 +94,13 @@ function App() {
   return (
     <div className="App">
 
+      {user?.displayName ? (
+        <ImageUpload username={user.displayName}/>  
+      ) : (
+        <h3>Sorry, you need to login to upload</h3>
+      )}
+    
+      {/* signUp modal */}
       <Modal open={open} onClose={() => setOpen(false)} >
         <div style={modalStyle} className={classes.paper}>
           <center>
@@ -127,6 +135,7 @@ function App() {
         </div> 
       </Modal>
 
+      {/* signIn modal  */}
       <Modal open={openSignIn} onClose={() => setOpenSignIn(false)} >
         <div style={modalStyle} className={classes.paper}>
           <center>
@@ -169,7 +178,7 @@ function App() {
         ) : (
           <div className="app__loginContainer">
             <Button onClick={() => setOpenSignIn(true)}>Sign In</Button>
-            <Button onClick={() => setOpen(false)}>Sign Up</Button>
+            <Button onClick={() => setOpen(true)}>Sign Up</Button>
           </div>
       )}
       <h1>Instagram Clone with React!</h1>
