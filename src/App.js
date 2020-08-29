@@ -42,7 +42,7 @@ function App() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('false');  
-  const [ user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
 
   // runs after first render AND after every update
   useEffect(() => {
@@ -182,7 +182,7 @@ function App() {
         <div className="app__postsleft">
           {
             posts.map(({id, post}) => {
-              return <Post key={id} username={post.username} caption={post.caption} imageUrl={post.imageUrl}/>
+              return <Post key={id} postId={id} user={user} username={post.username} caption={post.caption} imageUrl={post.imageUrl}/>
             })
           }
         </div>
