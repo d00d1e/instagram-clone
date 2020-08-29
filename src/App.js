@@ -8,6 +8,8 @@ import Modal from '@material-ui/core/Modal';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Input } from '@material-ui/core';
 
+import InstagramEmbed from 'react-instagram-embed';
+
 // Modal control
 function getModalStyle() {
   const top = 50;
@@ -94,12 +96,6 @@ function App() {
   return (
     <div className="App">
 
-      {user?.displayName ? (
-        <ImageUpload username={user.displayName}/>  
-      ) : (
-        <h3>Sorry, you need to login to upload</h3>
-      )}
-    
       {/* signUp modal */}
       <Modal open={open} onClose={() => setOpen(false)} >
         <div style={modalStyle} className={classes.paper}>
@@ -171,23 +167,46 @@ function App() {
           src="https://www.instagram.com/static/images/web/mobile_nav_type_logo-2x.png/1b47f9d0e595.png"
           alt=""
         />
-      </div>
 
-      {user ? (
-        <Button onClick={() => auth.signOut()}>Logout</Button>
+        {user ? (
+          <Button onClick={() => auth.signOut()}>Logout</Button>
         ) : (
           <div className="app__loginContainer">
             <Button onClick={() => setOpenSignIn(true)}>Sign In</Button>
             <Button onClick={() => setOpen(true)}>Sign Up</Button>
           </div>
+        )}
+      </div>
+      
+      <div className="app__posts">
+        <div className="app__postsleft">
+          {
+            posts.map(({id, post}) => {
+              return <Post key={id} username={post.username} caption={post.caption} imageUrl={post.imageUrl}/>
+            })
+          }
+        </div>
+        <div className="app__postsRight">
+          <InstagramEmbed
+            url='https://www.instagram.com/p/CEE90TAH96o/'
+            maxWidth={320}
+            hideCaption={false}
+            containerTagName='div'
+            protocol=''
+            injectScript
+            onLoading={() => {}}
+            onSuccess={() => {}}
+            onAfterRender={() => {}}
+            onFailure={() => {}}
+          />
+        </div>
+      </div>
+      
+      {user?.displayName ? (
+        <ImageUpload username={user.displayName}/>  
+      ) : (
+        <h3>Sorry, you need to login to upload</h3>
       )}
-      <h1>Instagram Clone with React!</h1>
-
-      {
-        posts.map(({id, post}) => {
-          return <Post key={id} username={post.username} caption={post.caption} imageUrl={post.imageUrl}/>
-        })
-      }
 
     </div>
   );
